@@ -1,29 +1,3 @@
-// import logo from './logo.svg';
-// import './App.css';
-
-// function App() {
-//   return (
-//     <div className="App">
-//       <header className="App-header">
-//         <img src={logo} className="App-logo" alt="logo" />
-//         <p>
-//           Edit <code>src/App.js</code> and save to reload.
-//         </p>
-//         <a
-//           className="App-link"
-//           href="https://reactjs.org"
-//           target="_blank"
-//           rel="noopener noreferrer"
-//         >
-//           Learn React
-//         </a>
-//       </header>
-//     </div>
-//   );
-// }
-
-// export default App;
-
 import React, {Component} from "react";
 
 export default class App extends Component {
@@ -41,12 +15,13 @@ export default class App extends Component {
   }
 
   updateNewTextValue = (event) => {
-    this.setState({ newItemText: event.target.value })
+    this.setState({ newItemText: event.target.value})
   }
 
   createNewTodo = () => {
     if (!this.state.todoItems
-              .find(item => item.action === this.state.newItemText)) {
+              .find(item => item.action === this.state.newItemText)
+          && this.state.newItemText !== '') {
                 this.setState({
                   todoItems: [...this.state.todoItems,
                               { action:this.state.newItemText, done : false}],
@@ -55,11 +30,18 @@ export default class App extends Component {
               }
   }
 
-  // changeStateData = () => {
-  //   this.setState({
-  //     userName: this.state.userName === "Mike" ? "Frank" : "Mike"
-  //   })
-  // }
+  toggleTodo = (todo) => this.setState({ todoItems:
+    this.state.todoItems.map(item => item.action === todo.action
+      ? { ...item, done:!item.done } : item) }); // Probar poner el item explicito
+
+  todoTableRows = () => this.state.todoItems.map(item =>
+    <tr key={ item.action }>
+      <td>{ item.action }</td>
+      <td>
+        <input type="checkbox" checked={ item.done }
+          onChange={ () => this.toggleTodo(item) } />
+      </td>
+    </tr> );
 
   render = () => 
       <div>
@@ -70,11 +52,17 @@ export default class App extends Component {
         <div className="container-fluid">
           <div className="my-1">
             <input className="form-control"
-                  value={ this.state.newItemText }
+                  value={this.state.newItemText}
                   onChange={ this.updateNewTextValue } />
-            <button className="btn btn-primary mt-1"
+            <button className="btn btn-primary mt-1" 
                   onClick={ this.createNewTodo }>Add</button>
           </div>
+          <table className="table table-striped table-bordered">
+            <thead>
+              <tr><th>Description</th><th>Done</th></tr>
+            </thead>
+            <tbody>{ this.todoTableRows() }</tbody>
+          </table>
         </div>
       </div>
     
